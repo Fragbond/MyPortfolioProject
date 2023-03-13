@@ -16,9 +16,13 @@ class MYPORTFOLIOPROJECT_API AMyPortfolioProjectCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+
 		// Player camera
 		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		UCameraComponent* MyPortfolioProjectCameraComponent;
+
+		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pickup, meta = (AllowPrivateAccess = "true"))
+		class UCapsuleComponent* PickupCollision;
 
 		// Input mapping context
 		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -35,28 +39,14 @@ class MYPORTFOLIOPROJECT_API AMyPortfolioProjectCharacter : public ACharacter
 		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UInputAction* PickupAction;
 
-		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-		class UInputAction* InspectAction;
+		UFUNCTION()
+		void OnComponentBeginOverlap_Pickup(UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,bool bFromSweep, const FHitResult& SweepResult);
 
-		// Holding component
-		UPROPERTY(EditAnywhere)
-		class USceneComponent* HoldingComponent;
+		// If holding item
+		bool HoldingItem = false;
 
-		// Current item player is holding
-		UPROPERTY(EditAnywhere)
-		class AMyPortfolioProjectPickupActor* CurrentItem;
+		bool ReadyToPickup = false;
 
-		// If holding item and is inspecting item
-		bool bHoldingItem;
-		bool bInspecting;
-
-		// Item rotation camera
-		float PitchMax;
-		float PitchMin;
-
-		// Item rotation vectors
-		FVector HoldingComp;
-		FRotator LastRotation;
 public:
 	// Sets default values for this character's properties
 	AMyPortfolioProjectCharacter();
@@ -87,13 +77,11 @@ protected:
 	// Called for every look input
 	void Look(const FInputActionValue& Value);
 
-	void Pickup();
+	void Pickup(const FInputActionValue& Value);
 
-	// Call on inspect button
-	void OnInspect();
+	AActor* GetActor;
 
-	// Releases inspected item on call
-	void OnInspectReleased();
-
-	void ToggleItemPickup();
+private:
+	// The Character holding an item
+	AMyPortfolioProjectCharacter* Character;
 };

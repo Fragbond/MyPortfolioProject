@@ -15,7 +15,6 @@ AMyPortfolioProjectPickupActor::AMyPortfolioProjectPickupActor()
 	MyMesh->SetSimulatePhysics(true);
 	RootComponent = MyMesh;
 
-	bHolding = false;
 	bGravity = true;
 }
 
@@ -23,54 +22,10 @@ AMyPortfolioProjectPickupActor::AMyPortfolioProjectPickupActor()
 void AMyPortfolioProjectPickupActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	MyPortfolioProjectCharacter = UGameplayStatics::GetPlayerCharacter(this, 0);
-	PickupCamera = MyPortfolioProjectCharacter->FindComponentByClass<UCameraComponent>();
-
-	TArray<USceneComponent*> Components;
-
-	MyPortfolioProjectCharacter->GetComponents(Components);
-
-	if (Components.Num() > 0)
-	{
-		for (auto& Comp : Components)
-		{
-			if (Comp->GetName() == "HoldingComponent")
-			{
-				HoldingComp = Cast<USceneComponent>(Comp);
-			}
-		}
-	}
 }
 
 // Called every frame
 void AMyPortfolioProjectPickupActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if (bHolding && HoldingComp)
-	{
-		SetActorLocationAndRotation(HoldingComp->GetComponentLocation(), HoldingComp->GetComponentRotation());
-	}
-}
-
-void AMyPortfolioProjectPickupActor::RotateActor()
-{
-	ControlRotation = GetWorld()->GetFirstPlayerController()->GetControlRotation();
-	SetActorRotation(FQuat(ControlRotation));
-}
-
-void AMyPortfolioProjectPickupActor::Pickup()
-{
-	bHolding = !bHolding;
-	bGravity = !bGravity;
-	MyMesh->SetEnableGravity(bGravity);
-	MyMesh->SetSimulatePhysics(bHolding ? false : true);
-	MyMesh->SetCollisionEnabled(bHolding ? ECollisionEnabled::NoCollision : ECollisionEnabled::QueryAndPhysics);
-
-	if (!bHolding)
-	{
-		ForwardVector = PickupCamera->GetForwardVector();
-		MyMesh->AddForce(ForwardVector * 100000 * MyMesh->GetMass());
-	}
 }

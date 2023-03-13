@@ -27,24 +27,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* MyMesh;
 
-	UPROPERTY(EditAnywhere)
-	USceneComponent* HoldingComp;
-
-	// Rotates pick up actors
-	UFUNCTION()
-	void RotateActor();
-
-	// Picks up actors
-	UFUNCTION()
-	void Pickup();
-
-	// If player is holding an actor
-	bool bHolding;
 	// If actor should have gravity
 	bool bGravity;
-
-	FRotator ControlRotation;
-	ACharacter* MyPortfolioProjectCharacter;
-	UCameraComponent* PickupCamera;
-	FVector ForwardVector;
 };
