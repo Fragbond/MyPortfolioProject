@@ -9,6 +9,8 @@
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/Actor.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "SocketSubsystem.h"
+
 
 // Sets default values
 AMyPortfolioProjectCharacter::AMyPortfolioProjectCharacter()
@@ -21,6 +23,7 @@ AMyPortfolioProjectCharacter::AMyPortfolioProjectCharacter()
 	MyPortfolioProjectCameraComponent->SetupAttachment(GetCapsuleComponent());
 	MyPortfolioProjectCameraComponent->bUsePawnControlRotation = true;
 
+	// Creates pickup collision capsule
 	PickupCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("PickupCollision"));
 	PickupCollision->SetupAttachment(GetCapsuleComponent());
 }
@@ -45,6 +48,7 @@ void AMyPortfolioProjectCharacter::BeginPlay()
 		}
 	}
 
+	// Creates begin overlap for pickup collision
 	PickupCollision->OnComponentBeginOverlap.AddDynamic(this, &AMyPortfolioProjectCharacter::OnComponentBeginOverlap_Pickup);
 }
 
@@ -60,8 +64,10 @@ void AMyPortfolioProjectCharacter::SetupPlayerInputComponent(class UInputCompone
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMyPortfolioProjectCharacter::Move);
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMyPortfolioProjectCharacter::Look);
-
+		// Pickup
 		EnhancedInputComponent->BindAction(PickupAction, ETriggerEvent::Triggered, this, &AMyPortfolioProjectCharacter::Pickup);
+		// Drop
+		EnhancedInputComponent->BindAction(DropAction, ETriggerEvent::Triggered, this, &AMyPortfolioProjectCharacter::Drop);
 	}
 
 }
@@ -79,13 +85,20 @@ void AMyPortfolioProjectCharacter::Move(const FInputActionValue& Value)
 	}
 }
 
-void AMyPortfolioProjectCharacter::Pickup(const FInputActionValue& Value)
+void AMyPortfolioProjectCharacter::Drop(const FInputActionValue& Value)
 {
-	FVector PickupCollisionVector = PickupCollision->GetForwardVector();
-
 	if (Controller != nullptr)
 	{
-			GetActor->SetActorLocation(PickupCollisionVector);
+		GetActor->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	}
+}
+
+void AMyPortfolioProjectCharacter::Pickup(const FInputActionValue& Value)
+{
+	if (Controller != nullptr)
+	{
+		FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, true);
+		GetActor->AttachToComponent(FindComponentByClass<USkeletalMeshComponent>(), AttachmentRules, TEXT("Pickup Socket"));
 	}
 }
 
@@ -103,10 +116,6 @@ void AMyPortfolioProjectCharacter::Look(const FInputActionValue& Value)
 
 void AMyPortfolioProjectCharacter::OnComponentBeginOverlap_Pickup(UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogClass, Log, TEXT("%s"), *OtherActor->GetName());
-
-	ReadyToPickup = true;
-
+	// Gets actor that is in pickup collision
 	GetActor = OtherActor;
 }
-

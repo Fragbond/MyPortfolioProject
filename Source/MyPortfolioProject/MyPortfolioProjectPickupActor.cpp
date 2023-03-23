@@ -14,8 +14,6 @@ AMyPortfolioProjectPickupActor::AMyPortfolioProjectPickupActor()
 	MyMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MyMesh"));
 	MyMesh->SetSimulatePhysics(true);
 	RootComponent = MyMesh;
-
-	bGravity = true;
 }
 
 // Called when the game starts or when spawned

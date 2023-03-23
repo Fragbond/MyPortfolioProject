@@ -26,7 +26,4 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* MyMesh;
-
-	// If actor should have gravity
-	bool bGravity;
 };

@@ -36,16 +36,16 @@ class MYPORTFOLIOPROJECT_API AMyPortfolioProjectCharacter : public ACharacter
 		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UInputAction* MoveAction;
 
+		// Pickup input action
 		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UInputAction* PickupAction;
 
+		// Drop input action
+		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		class UInputAction* DropAction;
+
 		UFUNCTION()
 		void OnComponentBeginOverlap_Pickup(UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,bool bFromSweep, const FHitResult& SweepResult);
-
-		// If holding item
-		bool HoldingItem = false;
-
-		bool ReadyToPickup = false;
 
 public:
 	// Sets default values for this character's properties
@@ -77,11 +77,15 @@ protected:
 	// Called for every look input
 	void Look(const FInputActionValue& Value);
 
+	// Called when pickup button is hit
 	void Pickup(const FInputActionValue& Value);
 
-	AActor* GetActor;
+	// Called when drop button is hit
+	void Drop(const FInputActionValue& Value);
 
 private:
 	// The Character holding an item
 	AMyPortfolioProjectCharacter* Character;
+
+	AActor* GetActor;
 };
