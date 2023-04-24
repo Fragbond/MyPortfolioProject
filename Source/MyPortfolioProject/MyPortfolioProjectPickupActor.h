@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Camera/CameraComponent.h"
 #include "MyPortfolioProjectPickupActor.generated.h"
 
 UCLASS()
@@ -25,5 +24,5 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere)
-	UStaticMeshComponent* MyMesh;
+	UStaticMeshComponent* PickupActor;
 };

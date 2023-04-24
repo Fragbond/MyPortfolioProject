@@ -2,6 +2,7 @@
 
 
 #include "MyPortfolioProjectPickupActor.h"
+#include "MyPortfolioProjectCharacter.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -10,10 +11,9 @@ AMyPortfolioProjectPickupActor::AMyPortfolioProjectPickupActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-	MyMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MyMesh"));
-	MyMesh->SetSimulatePhysics(true);
-	RootComponent = MyMesh;
+	// Creates pick up actor
+	PickupActor = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MyMesh"));
+	PickupActor->SetSimulatePhysics(true);
 }
 
 // Called when the game starts or when spawned

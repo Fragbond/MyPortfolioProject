@@ -10,6 +10,7 @@
 #include "GameFramework/Actor.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "SocketSubsystem.h"
+#include "Components/PrimitiveComponent.h"
 
 
 // Sets default values
@@ -50,6 +51,7 @@ void AMyPortfolioProjectCharacter::BeginPlay()
 
 	// Creates begin overlap for pickup collision
 	PickupCollision->OnComponentBeginOverlap.AddDynamic(this, &AMyPortfolioProjectCharacter::OnComponentBeginOverlap_Pickup);
+	PickupCollision->OnComponentEndOverlap.AddDynamic(this, &AMyPortfolioProjectCharacter::OnComponentEndOverlap_Pickup);
 }
 
 // Called to bind functionality to input
@@ -68,6 +70,10 @@ void AMyPortfolioProjectCharacter::SetupPlayerInputComponent(class UInputCompone
 		EnhancedInputComponent->BindAction(PickupAction, ETriggerEvent::Triggered, this, &AMyPortfolioProjectCharacter::Pickup);
 		// Drop
 		EnhancedInputComponent->BindAction(DropAction, ETriggerEvent::Triggered, this, &AMyPortfolioProjectCharacter::Drop);
+		// Get Vector
+		EnhancedInputComponent->BindAction(GetVectorAction, ETriggerEvent::Triggered, this, &AMyPortfolioProjectCharacter::GetVector);
+		// Teleport to vector
+		EnhancedInputComponent->BindAction(TeleportToVectorAction, ETriggerEvent::Triggered, this, &AMyPortfolioProjectCharacter::TeleportToVector);
 	}
 
 }
@@ -89,7 +95,18 @@ void AMyPortfolioProjectCharacter::Drop(const FInputActionValue& Value)
 {
 	if (Controller != nullptr)
 	{
-		GetActor->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+		if (GetPickupActor == NULL)
+		{
+			// Tells player to pick up something to use drop
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("You need to pick up an object to use drop."));
+		}
+		else
+		{
+			// Turns on gravity for actor
+			GetPickupActor->SetSimulatePhysics(true);
+			// Detach pickup item from pickup socket
+			GetPickupActor->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+		}
 	}
 }
 
@@ -97,8 +114,38 @@ void AMyPortfolioProjectCharacter::Pickup(const FInputActionValue& Value)
 {
 	if (Controller != nullptr)
 	{
-		FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, true);
-		GetActor->AttachToComponent(FindComponentByClass<USkeletalMeshComponent>(), AttachmentRules, TEXT("Pickup Socket"));
+		if (GetPickupActor == NULL)
+		{
+			// Tells player to get closer
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("You need to get closer to use pickup."));
+		}
+		else
+		{
+			// Turns off gravity for actor
+			GetPickupActor->SetSimulatePhysics(false);
+			// Attach pickup item to pickup socket
+			FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, true);
+			GetPickupActor->AttachToComponent(FindComponentByClass<USkeletalMeshComponent>(), AttachmentRules, TEXT("Pickup Socket"));
+		}
+	}
+}
+
+void AMyPortfolioProjectCharacter::GetVector(const FInputActionValue& Value)
+{
+	if (Controller != nullptr)
+	{
+		DesiredTeleportPostion = GetActorLocation();
+		DesiredTeleportRotation = GetActorRotation();
+		DesiredTeleportCameraRotation = GetControlRotation();
+	}
+}
+
+void AMyPortfolioProjectCharacter::TeleportToVector(const FInputActionValue& Value)
+{
+	if (Controller != nullptr)
+	{
+		TeleportTo(DesiredTeleportPostion, DesiredTeleportRotation);
+		GetController()->SetControlRotation(DesiredTeleportCameraRotation);
 	}
 }
 
@@ -114,8 +161,14 @@ void AMyPortfolioProjectCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
-void AMyPortfolioProjectCharacter::OnComponentBeginOverlap_Pickup(UPrimitiveComponent* OverlappedComp, class AActor* OtherActor,UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,bool bFromSweep, const FHitResult& SweepResult)
+void AMyPortfolioProjectCharacter::OnComponentBeginOverlap_Pickup(UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,bool bFromSweep, const FHitResult& SweepResult)
 {
-	// Gets actor that is in pickup collision
-	GetActor = OtherActor;
+	// Gets the pick up actor
+	GetPickupActor = OtherComp;
+}
+
+void AMyPortfolioProjectCharacter::OnComponentEndOverlap_Pickup(UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	// Sets actor to NULL
+	GetPickupActor = NULL;
 }

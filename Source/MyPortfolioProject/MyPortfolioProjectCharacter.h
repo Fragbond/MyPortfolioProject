@@ -36,6 +36,14 @@ class MYPORTFOLIOPROJECT_API AMyPortfolioProjectCharacter : public ACharacter
 		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UInputAction* MoveAction;
 
+		// Get vector input action
+		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		class UInputAction* GetVectorAction;
+
+		// Teleport to vector input action
+		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		class UInputAction* TeleportToVectorAction;
+
 		// Pickup input action
 		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UInputAction* PickupAction;
@@ -47,6 +55,8 @@ class MYPORTFOLIOPROJECT_API AMyPortfolioProjectCharacter : public ACharacter
 		UFUNCTION()
 		void OnComponentBeginOverlap_Pickup(UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,bool bFromSweep, const FHitResult& SweepResult);
 
+		UFUNCTION()
+		void OnComponentEndOverlap_Pickup(UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 public:
 	// Sets default values for this character's properties
 	AMyPortfolioProjectCharacter();
@@ -83,9 +93,17 @@ protected:
 	// Called when drop button is hit
 	void Drop(const FInputActionValue& Value);
 
+	void GetVector(const FInputActionValue& Value);
+
+	void TeleportToVector(const FInputActionValue& Value);
+
 private:
 	// The Character holding an item
 	AMyPortfolioProjectCharacter* Character;
 
-	AActor* GetActor;
+	UPrimitiveComponent* GetPickupActor = NULL;
+
+	FVector DesiredTeleportPostion;
+	FRotator DesiredTeleportRotation;
+	FRotator DesiredTeleportCameraRotation;
 };
