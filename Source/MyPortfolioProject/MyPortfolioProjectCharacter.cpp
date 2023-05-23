@@ -163,12 +163,20 @@ void AMyPortfolioProjectCharacter::Look(const FInputActionValue& Value)
 
 void AMyPortfolioProjectCharacter::OnComponentBeginOverlap_Pickup(UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,bool bFromSweep, const FHitResult& SweepResult)
 {
-	// Gets the pick up actor
-	GetPickupActor = OtherComp;
+	AMyPortfolioProjectPickupActor* PickupActor = Cast<AMyPortfolioProjectPickupActor>(OtherActor);
+	if (PickupActor)
+	{
+		// Gets the pick up actor
+		GetPickupActor = OtherComp;
+	}
 }
 
 void AMyPortfolioProjectCharacter::OnComponentEndOverlap_Pickup(UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	// Sets actor to NULL
-	GetPickupActor = NULL;
+	AMyPortfolioProjectPickupActor* PickupActor = Cast<AMyPortfolioProjectPickupActor>(OtherActor);
+	if (PickupActor)
+	{
+		// Sets actor to NULL
+		GetPickupActor = NULL;
+	}
 }

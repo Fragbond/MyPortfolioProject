@@ -9,6 +9,6 @@ AMyPortfolioProjectGameModeBase::AMyPortfolioProjectGameModeBase()
 	: Super()
 {
 	// Sets the default pawn class
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnClassFinder(TEXT("/Game/PortfolioProject/Blueprints/Assets/BP_PortfolioProjectCharacter"));
+	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnClassFinder(TEXT("/Game/PortfolioProject/Blueprints/Assets/Characters/BP_PortfolioProjectCharacter"));
 	DefaultPawnClass = PlayerPawnClassFinder.Class;
 }
