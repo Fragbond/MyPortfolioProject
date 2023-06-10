@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "InputActionValue.h"
 #include "MyPPDroneCharacter.generated.h"
 
 class UInputComponent;
@@ -14,27 +13,31 @@ class MYPORTFOLIOPROJECT_API AMyPPDroneCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-		class UInputMappingContext* DefaultMappingContext;
-
-		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-		class UInputAction* MoveAction;
-
 public:
 	// Sets default values for this character's properties
 	AMyPPDroneCharacter();
+
+	UPROPERTY(EditAnywhere, Category = "BehaviorTree")
+	class UBehaviorTree* BehaviorTree;
+
+	UPROPERTY(EditAnywhere, Category = "Patrol", Meta = (MakeEditWidget))
+	TArray<FVector> PatrolPoints;
+
+	class AMyPPDroneController* MyPPDroneController;
+
+	UFUNCTION(BlueprintCallable)
+	const FVector& GetNextPatrolLocation();
+
+private:
+	TArray<FVector> WorldPatrolPoints;
+
+	int CurrentPatrolIndex = 0;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	void Move(const FInputActionValue& Value);
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 };

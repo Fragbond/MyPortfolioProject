@@ -2,8 +2,8 @@
 
 
 #include "MyPPDroneCharacter.h"
-#include "EnhancedInputComponent.h"
-#include "EnhancedInputSubsystems.h"
+#include "MyPPDroneController.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 // Sets default values
 AMyPPDroneCharacter::AMyPPDroneCharacter()
@@ -17,13 +17,27 @@ AMyPPDroneCharacter::AMyPPDroneCharacter()
 void AMyPPDroneCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+
+	for (auto PatrolPoint : PatrolPoints)
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		WorldPatrolPoints.Add(PatrolPoint + GetActorLocation());
+	}
+}
+
+const FVector& AMyPPDroneCharacter::GetNextPatrolLocation()
+{
+	if (WorldPatrolPoints.Num() > 0)
+	{
+		if (CurrentPatrolIndex >= WorldPatrolPoints.Num())
 		{
-			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+			CurrentPatrolIndex = 0;
 		}
+		return WorldPatrolPoints[CurrentPatrolIndex++];
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, TEXT("No Patrol Locations set for Drone Actor"));
+		return FVector::ZeroVector;
 	}
 }
 
@@ -33,26 +47,4 @@ void AMyPPDroneCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-// Called to bind functionality to input
-void AMyPPDroneCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
-	{
-		// Adds movement to drone
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMyPPDroneCharacter::Move);
-	}
-}
-
-void AMyPPDroneCharacter::Move(const FInputActionValue& Value)
-{
-	FVector MovementVector = Value.Get<FVector>();
-
-	if (Controller != nullptr)
-	{
-		AddMovementInput(GetActorForwardVector(), MovementVector.Y);
-		AddMovementInput(GetActorRightVector(), MovementVector.X);
-		AddMovementInput(GetActorUpVector(), MovementVector.Z);
-	}
-}
