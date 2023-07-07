@@ -137,6 +137,7 @@ void AMyPortfolioProjectCharacter::GetVector(const FInputActionValue& Value)
 		DesiredTeleportPostion = GetActorLocation();
 		DesiredTeleportRotation = GetActorRotation();
 		DesiredTeleportCameraRotation = GetControlRotation();
+		HasPlacesDownTeleporter = true;
 	}
 }
 
@@ -144,8 +145,15 @@ void AMyPortfolioProjectCharacter::TeleportToVector(const FInputActionValue& Val
 {
 	if (Controller != nullptr)
 	{
-		TeleportTo(DesiredTeleportPostion, DesiredTeleportRotation);
-		GetController()->SetControlRotation(DesiredTeleportCameraRotation);
+		if (HasPlacesDownTeleporter == true)
+		{
+			TeleportTo(DesiredTeleportPostion, DesiredTeleportRotation);
+			GetController()->SetControlRotation(DesiredTeleportCameraRotation);
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("You need to place drop the teleporter in order to use it."));
+		}
 	}
 }
 

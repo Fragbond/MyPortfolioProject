@@ -106,4 +106,6 @@ private:
 	FVector DesiredTeleportPostion;
 	FRotator DesiredTeleportRotation;
 	FRotator DesiredTeleportCameraRotation;
+
+	bool HasPlacesDownTeleporter = false;
 };
