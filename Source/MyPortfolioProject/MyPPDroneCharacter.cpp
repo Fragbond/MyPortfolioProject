@@ -17,6 +17,7 @@ void AMyPPDroneCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Gets all patrol points
 	for (auto PatrolPoint : PatrolPoints)
 	{
 		WorldPatrolPoints.Add(PatrolPoint + GetActorLocation());
@@ -25,6 +26,7 @@ void AMyPPDroneCharacter::BeginPlay()
 
 const FVector& AMyPPDroneCharacter::GetNextPatrolLocation()
 {
+	// Gets location of the next patrol point
 	if (WorldPatrolPoints.Num() > 0)
 	{
 		if (CurrentPatrolIndex >= WorldPatrolPoints.Num())

@@ -21,6 +21,7 @@ class MYPORTFOLIOPROJECT_API AMyPortfolioProjectCharacter : public ACharacter
 		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		UCameraComponent* MyPortfolioProjectCameraComponent;
 
+		// Adds pickup collision
 		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pickup, meta = (AllowPrivateAccess = "true"))
 		class UCapsuleComponent* PickupCollision;
 
@@ -52,9 +53,11 @@ class MYPORTFOLIOPROJECT_API AMyPortfolioProjectCharacter : public ACharacter
 		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UInputAction* DropAction;
 
+		// Adds begin overlap to pickup collision
 		UFUNCTION()
 		void OnComponentBeginOverlap_Pickup(UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,bool bFromSweep, const FHitResult& SweepResult);
 
+		// Adds end overlap to pickup collision
 		UFUNCTION()
 		void OnComponentEndOverlap_Pickup(UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 public:
@@ -93,19 +96,24 @@ protected:
 	// Called when drop button is hit
 	void Drop(const FInputActionValue& Value);
 
+	// Called when player places teleporter down
 	void GetVector(const FInputActionValue& Value);
 
+	// Called when player teleport to location
 	void TeleportToVector(const FInputActionValue& Value);
 
 private:
 	// The Character holding an item
 	AMyPortfolioProjectCharacter* Character;
 
+	// Sets pickup to NULL
 	UPrimitiveComponent* GetPickupActor = NULL;
 
+	// Gets players vector and rotator for the teleporter
 	FVector DesiredTeleportPostion;
 	FRotator DesiredTeleportRotation;
 	FRotator DesiredTeleportCameraRotation;
 
+	// Checks if player has use the teleporter
 	bool HasPlacesDownTeleporter = false;
 };

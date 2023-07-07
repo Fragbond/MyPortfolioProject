@@ -17,14 +17,18 @@ public:
 	// Sets default values for this character's properties
 	AMyPPDroneCharacter();
 
+	// Creates behavior tree for drone
 	UPROPERTY(EditAnywhere, Category = "BehaviorTree")
 	class UBehaviorTree* BehaviorTree;
 
+	// Creates arrays for patrol points
 	UPROPERTY(EditAnywhere, Category = "Patrol", Meta = (MakeEditWidget))
 	TArray<FVector> PatrolPoints;
 
+	// Creates controller for drone
 	class AMyPPDroneController* MyPPDroneController;
 
+	// Called when drone moves to next patrol point
 	UFUNCTION(BlueprintCallable)
 	const FVector& GetNextPatrolLocation();
 

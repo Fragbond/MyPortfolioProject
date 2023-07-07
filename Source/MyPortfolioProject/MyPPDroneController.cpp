@@ -8,15 +8,17 @@
 
 AMyPPDroneController::AMyPPDroneController()
 {
+	// Sets Behavior tree
 	BehaviorTreeComponent = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorTreeComp"));
 	check(BehaviorTreeComponent);
-
+	// Sets blackboard
 	BlackboardComponent = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackboardComp"));
 	check(BlackboardComponent);
 }
 
 void AMyPPDroneController::OnPossess(APawn* InPawn)
 {
+	// Run Behavior tree
 	Super::OnPossess(InPawn);
 	if (InPawn == nullptr)
 	{

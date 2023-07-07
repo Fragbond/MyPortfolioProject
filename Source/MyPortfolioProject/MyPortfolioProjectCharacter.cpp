@@ -134,9 +134,12 @@ void AMyPortfolioProjectCharacter::GetVector(const FInputActionValue& Value)
 {
 	if (Controller != nullptr)
 	{
+		// Gets players location
 		DesiredTeleportPostion = GetActorLocation();
 		DesiredTeleportRotation = GetActorRotation();
 		DesiredTeleportCameraRotation = GetControlRotation();
+
+		// Sets if player has use teleport
 		HasPlacesDownTeleporter = true;
 	}
 }
@@ -145,13 +148,16 @@ void AMyPortfolioProjectCharacter::TeleportToVector(const FInputActionValue& Val
 {
 	if (Controller != nullptr)
 	{
+		// Checks to see if the teleporter has been use
 		if (HasPlacesDownTeleporter == true)
 		{
+			// Teleport to location
 			TeleportTo(DesiredTeleportPostion, DesiredTeleportRotation);
 			GetController()->SetControlRotation(DesiredTeleportCameraRotation);
 		}
 		else
 		{
+			// Tells player that they need to place a teleporter before they can you it
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("You need to place drop the teleporter in order to use it."));
 		}
 	}
